@@ -17,24 +17,26 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Briefcase, Users, User, MapPin } from 'lucide-react';
 
-const diagnosisSchema = z.object({
-  mode: z.enum(['couple', 'single'], {
-    required_error: '진단 모드를 선택해주세요.',
-  }),
-  address1: z.string().min(2, {
-    message: '첫 번째 직장 주소를 입력해주세요.',
-  }),
-  address2: z.string().optional().refine((val, ctx) => {
-    // If mode is couple, address2 is required
-    const mode = (ctx as any).parent?.mode;
-    if (mode === 'couple' && (!val || val.length < 2)) {
-      return false;
+const diagnosisSchema = z
+  .object({
+    mode: z.enum(['couple', 'single'], {
+      required_error: '진단 모드를 선택해주세요.',
+    }),
+    address1: z.string().min(2, {
+      message: '첫 번째 직장 주소를 입력해주세요.',
+    }),
+    address2: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    // 맞벌이 커플 모드일 때만 배우자 직장 주소 필수 검증
+    if (data.mode === 'couple' && (!data.address2 || data.address2.length < 2)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '배우자의 직장 주소를 입력해주세요.',
+        path: ['address2'],
+      });
     }
-    return true;
-  }, {
-    message: '배우자의 직장 주소를 입력해주세요.',
-  }),
-});
+  });
 
 type DiagnosisFormValues = z.infer<typeof diagnosisSchema>;
 
@@ -47,6 +49,7 @@ export function DiagnosisForm() {
       address1: '',
       address2: '',
     },
+    mode: 'onChange',
   });
 
   const mode = form.watch('mode');
