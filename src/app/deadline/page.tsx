@@ -33,14 +33,13 @@ export default function DeadlinePage() {
       return;
     }
 
-    // 더미 타임라인 생성
     const steps: TimelineStep[] = [
       {
         id: '1',
         title: '매물 리스트 최종 확인',
         description: '후보지 중 조건에 맞는 매물들을 최종 리스트업하고 방문 예약을 잡습니다.',
         dueDate: addDays(date, -21),
-        dDay: differenceInDays(date, addDays(date, -21)),
+        dDay: 21,
         status: 'pending'
       },
       {
@@ -48,7 +47,7 @@ export default function DeadlinePage() {
         title: '현장 방문 및 상태 체크',
         description: '직접 방문하여 수압, 채광, 주변 소음 등을 꼼꼼히 체크합니다.',
         dueDate: addDays(date, -14),
-        dDay: differenceInDays(date, addDays(date, -14)),
+        dDay: 14,
         status: 'pending'
       },
       {
@@ -88,7 +87,7 @@ export default function DeadlinePage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <header className="p-4 border-b flex items-center gap-4 sticky top-0 bg-white/80 backdrop-blur-md z-10">
-        <Link href="/" className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+        <Link href="/" className="p-2 hover:bg-slate-100 rounded-full transition-colors" aria-label="홈으로 이동">
           <ChevronLeft className="w-6 h-6" />
         </Link>
         <h1 className="font-headline font-bold text-lg">긴급 이사 데드라인</h1>
@@ -117,6 +116,7 @@ export default function DeadlinePage() {
                     "w-full h-14 justify-start text-left font-normal rounded-xl border-slate-200",
                     !date && "text-muted-foreground"
                   )}
+                  aria-label="이사 날짜 선택"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {date ? format(date, "PPP", { locale: ko }) : <span>날짜를 선택하세요</span>}
@@ -138,6 +138,7 @@ export default function DeadlinePage() {
             onClick={handleCalculate}
             className="w-full h-14 text-lg font-bold rounded-xl"
             disabled={!date}
+            aria-label="이사 타임라인 생성하기"
           >
             타임라인 생성하기
           </Button>
@@ -149,6 +150,7 @@ export default function DeadlinePage() {
             <Button 
               onClick={() => router.push('/deadline/listings')}
               className="w-full h-14 bg-primary/10 text-primary hover:bg-primary/20 border-none shadow-none font-bold rounded-xl gap-2"
+              aria-label="추천 동네 매물 보러가기"
             >
               추천 동네 매물 보러가기
               <Send className="w-4 h-4" />
