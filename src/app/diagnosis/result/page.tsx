@@ -1,4 +1,3 @@
-
 'use client';
 
 import dynamic from 'next/dynamic';
@@ -6,12 +5,14 @@ import { MapProvider, useMapContext } from './MapContext';
 import { FilterPanel } from './FilterPanel';
 import { CandidateDetailPanel } from './CandidateDetailPanel';
 import { EmptyState } from './EmptyState';
-import { ChevronLeft, Share2 } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Suspense, useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { Card } from '@/components/ui/card';
+import { ShareButton } from './ShareButton';
 
 const MapView = dynamic(() => import('./MapView'), { 
   ssr: false,
@@ -20,31 +21,24 @@ const MapView = dynamic(() => import('./MapView'), {
 
 function ResultContent() {
   const { filteredCandidates } = useMapContext();
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // 시뮬레이션 로딩
     const timer = setTimeout(() => {
       setIsLoading(false);
-      // 에러 시나리오 시뮬레이션 (확률적으로 토스트 표시 가능)
-      // toast({ variant: "destructive", title: "교통 정보를 가져오지 못했습니다.", description: "다시 시도해주세요." });
     }, 1500);
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <div className="flex flex-col h-screen md:flex-row overflow-hidden">
-      {/* Sidebar/Top Filter Section */}
       <div className="w-full md:w-[360px] flex flex-col h-full border-r bg-white shrink-0 overflow-y-auto z-40">
         <header className="p-4 flex items-center justify-between border-b sticky top-0 bg-white z-50">
           <Link href="/diagnosis" className="p-2 hover:bg-slate-100 rounded-full">
             <ChevronLeft className="w-6 h-6" />
           </Link>
           <span className="font-bold">진단 결과</span>
-          <Button variant="ghost" size="icon">
-            <Share2 className="w-5 h-5" />
-          </Button>
+          <ShareButton />
         </header>
         
         <FilterPanel />
@@ -61,7 +55,6 @@ function ResultContent() {
         </div>
       </div>
 
-      {/* Map Section */}
       <div className="flex-1 relative h-[60vh] md:h-full">
         {isLoading && (
           <div className="absolute inset-0 bg-white/60 z-10 flex items-center justify-center">
@@ -108,9 +101,6 @@ function CandidateCard({ candidate }: { candidate: any }) {
     </Card>
   );
 }
-
-// Separate card export isn't needed here if defined locally, but keeping it clean
-import { Card } from '@/components/ui/card';
 
 export default function ResultPage() {
   return (
