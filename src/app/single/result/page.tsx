@@ -1,22 +1,27 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafetyGradePanel } from './SafetyGradePanel';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, Printer, Share2, Download } from 'lucide-react';
+import { ChevronLeft, Printer, Share2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function SingleResultPage() {
+  const [currentDate, setCurrentDate] = useState<string>('');
+
+  useEffect(() => {
+    setCurrentDate(new Date().toLocaleDateString());
+  }, []);
+
   const handlePrint = () => {
     window.print();
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      {/* Print Only Header */}
       <div className="print-only p-8 text-center border-b-2 border-black mb-8">
         <h1 className="text-3xl font-bold">1인 가구 최적 거주지 진단 리포트</h1>
-        <p className="mt-2 text-slate-600">발행일: {new Date().toLocaleDateString()}</p>
+        <p className="mt-2 text-slate-600">발행일: {currentDate}</p>
       </div>
 
       <header className="no-print p-4 border-b bg-white flex items-center justify-between sticky top-0 z-10">

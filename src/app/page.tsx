@@ -66,7 +66,7 @@ export default function LandingPage() {
               <Share2 className="w-6 h-6 text-green-600" />
             </div>
             <div>
-              <h3 className="font-bold text-lg">카카오톡 결과 공유</h3>
+              <h3 className="font-bold text-lg">결과 공유</h3>
               <p className="text-sm text-muted-foreground mt-1">분석 리포트를 배우자에게 즉시 공유하고 함께 고민하세요.</p>
             </div>
           </div>

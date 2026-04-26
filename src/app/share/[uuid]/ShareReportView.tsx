@@ -10,7 +10,6 @@ import { ConversionModal } from './ConversionModal';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-// Mock Data
 const CANDIDATES = [
   {
     id: '1',
@@ -40,7 +39,7 @@ const CANDIDATES = [
 
 export function ShareReportView({ uuid }: { uuid: string }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoggedIn] = useState(false); // 실제 구현 시 useUser() 훅 사용
+  const [isLoggedIn] = useState(false);
   const router = useRouter();
 
   return (
