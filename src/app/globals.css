@@ -56,3 +56,28 @@
     @apply bg-background text-foreground font-body;
   }
 }
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .grade-badge {
+    border: 1px solid #000 !important;
+    background-color: transparent !important;
+    color: #000 !important;
+  }
+  body {
+    background-color: white !important;
+  }
+  main {
+    box-shadow: none !important;
+    max-width: 100% !important;
+  }
+}
+
+.print-only {
+  display: none;
+}
