@@ -10,7 +10,7 @@ interface SafetyGradeBadgeProps {
   className?: string;
 }
 
-const GRADE_MAP = {
+const GRADE_CONFIG = {
   A: {
     color: 'bg-green-500',
     text: '매우 안전',
@@ -34,12 +34,12 @@ const GRADE_MAP = {
 };
 
 export function SafetyGradeBadge({ grade, className }: SafetyGradeBadgeProps) {
-  const config = GRADE_MAP[grade];
+  const config = GRADE_CONFIG[grade];
 
   return (
     <div 
       className={cn(
-        "grade-badge inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-white text-[10px] font-bold",
+        "grade-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-white text-xs font-bold",
         config.color,
         className
       )}
@@ -47,7 +47,7 @@ export function SafetyGradeBadge({ grade, className }: SafetyGradeBadgeProps) {
       aria-label={config.description}
     >
       <span>등급 {grade}</span>
-      <span className="w-0.5 h-2 bg-white/30" aria-hidden="true" />
+      <span className="w-px h-3 bg-white/30" aria-hidden="true" />
       <span>{config.text}</span>
     </div>
   );

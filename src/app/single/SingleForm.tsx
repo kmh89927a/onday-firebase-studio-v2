@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Briefcase, MapPin, Coffee, ShieldCheck, ShoppingBag } from 'lucide-react';
+import { Briefcase, MapPin, Coffee, ShieldCheck, ShoppingBag, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const singleSchema = z.object({
@@ -54,7 +54,9 @@ export function SingleForm() {
       values.workplace.includes('인천') ||
       values.leisureHub.includes('서울') || 
       values.leisureHub.includes('경기') || 
-      values.leisureHub.includes('인천');
+      values.leisureHub.includes('인천') ||
+      values.workplace.includes('시청') || // Mock geocoding fallback
+      values.leisureHub.includes('시청');
 
     if (!isCapitalRegion) {
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -66,7 +68,12 @@ export function SingleForm() {
       return;
     }
 
-    router.push('/single/result');
+    const params = new URLSearchParams();
+    params.set('addrA', values.workplace);
+    params.set('addrB', values.leisureHub);
+    params.set('mode', 'single');
+    
+    router.push(`/single/result?${params.toString()}`);
   }
 
   return (
@@ -85,7 +92,7 @@ export function SingleForm() {
                 <FormControl>
                   <div className="relative">
                     <Input
-                      placeholder="예) 서울시 강남구 테헤란로"
+                      placeholder="예) 강남역 또는 테헤란로"
                       className="h-14 rounded-xl pl-4 pr-10 border-slate-200"
                       {...field}
                     />
@@ -102,22 +109,22 @@ export function SingleForm() {
             name="leisureHub"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-bold flex items-center gap-2">
-                  <Coffee className="w-4 h-4 text-orange-500" />
-                  여가 거점 주소
+                <FormLabel className="text-sm font-bold flex items-center gap-2 text-orange-600">
+                  <Coffee className="w-4 h-4" />
+                  주요 여가 거점
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
-                      placeholder="예) 홍대입구역 또는 연남동"
+                      placeholder="예) 홍대입구역 또는 성수동"
                       className="h-14 rounded-xl pl-4 pr-10 border-slate-200"
                       {...field}
                     />
                     <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   </div>
                 </FormControl>
-                <FormDescription className="text-[10px]">
-                  자주 방문하는 약속 장소나 취미 활동 지역을 입력하세요.
+                <FormDescription className="text-[11px] leading-tight">
+                  친구를 만나거나 취미 활동을 위해 자주 방문하는 지역을 입력하세요.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -126,21 +133,25 @@ export function SingleForm() {
         </div>
 
         <div className="bg-slate-50 p-6 rounded-2xl space-y-4 border border-slate-100">
-          <h3 className="font-bold text-sm mb-2">분석 레이어 설정</h3>
+          <h3 className="font-bold text-sm mb-2 flex items-center gap-2">
+            <Zap className="w-4 h-4 text-primary" />
+            분석 우선순위 설정
+          </h3>
           
           <FormField
             control={form.control}
             name="safetyEnabled"
             render={({ field }) => (
-              <FormItem className="flex items-center justify-between space-y-0">
+              <FormItem className="flex items-center justify-between space-y-0 p-3 bg-white rounded-xl border border-slate-100">
                 <div className="flex items-center gap-3">
                   <ShieldCheck className="w-5 h-5 text-green-600" />
-                  <FormLabel className="font-medium">🌙 야간 치안 집중 분석</FormLabel>
+                  <FormLabel className="font-medium text-sm cursor-pointer">🌙 야간 치안 집중 분석</FormLabel>
                 </div>
                 <FormControl>
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    aria-label="야간 치안 분석 켜기"
                   />
                 </FormControl>
               </FormItem>
@@ -151,15 +162,16 @@ export function SingleForm() {
             control={form.control}
             name="amenitiesEnabled"
             render={({ field }) => (
-              <FormItem className="flex items-center justify-between space-y-0">
+              <FormItem className="flex items-center justify-between space-y-0 p-3 bg-white rounded-xl border border-slate-100">
                 <div className="flex items-center gap-3">
                   <ShoppingBag className="w-5 h-5 text-blue-600" />
-                  <FormLabel className="font-medium">🏪 편의시설 (편의점/세탁소)</FormLabel>
+                  <FormLabel className="font-medium text-sm cursor-pointer">🏪 편의시설 근접성</FormLabel>
                 </div>
                 <FormControl>
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    aria-label="편의시설 분석 켜기"
                   />
                 </FormControl>
               </FormItem>
@@ -170,15 +182,16 @@ export function SingleForm() {
             control={form.control}
             name="cafesEnabled"
             render={({ field }) => (
-              <FormItem className="flex items-center justify-between space-y-0">
+              <FormItem className="flex items-center justify-between space-y-0 p-3 bg-white rounded-xl border border-slate-100">
                 <div className="flex items-center gap-3">
                   <Coffee className="w-5 h-5 text-amber-700" />
-                  <FormLabel className="font-medium">☕ 카페 밀집도 및 카공 지수</FormLabel>
+                  <FormLabel className="font-medium text-sm cursor-pointer">☕ 카페 밀집도 및 카공 지수</FormLabel>
                 </div>
                 <FormControl>
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    aria-label="카페 밀집도 분석 켜기"
                   />
                 </FormControl>
               </FormItem>
@@ -189,8 +202,9 @@ export function SingleForm() {
         <Button
           type="submit"
           className="w-full h-14 text-lg font-bold rounded-xl shadow-xl shadow-primary/20"
+          aria-label="1인 가구 맞춤 진단 시작하기"
         >
-          1인 가구 맞춤 진단 시작
+          나만의 라이프스타일 진단 시작
         </Button>
       </form>
     </Form>

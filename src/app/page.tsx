@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Home, MapPin, Share2, Clock, Zap } from 'lucide-react';
+import { Home, MapPin, Share2, Clock, Zap, User } from 'lucide-react';
 
 export default function LandingPage() {
   return (
@@ -31,12 +31,20 @@ export default function LandingPage() {
             <Button asChild size="lg" className="h-14 text-lg font-bold rounded-xl shadow-lg shadow-primary/20">
               <Link href="/login">지금 바로 진단하기</Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="h-14 text-lg font-bold rounded-xl border-primary text-primary hover:bg-primary/5 gap-2">
-              <Link href="/deadline">
-                <Zap className="w-5 h-5 fill-current" />
-                긴급 이사 모드 (데드라인)
-              </Link>
-            </Button>
+            <div className="grid grid-cols-2 gap-3">
+              <Button asChild variant="outline" size="lg" className="h-14 text-sm font-bold rounded-xl border-primary text-primary hover:bg-primary/5 gap-2">
+                <Link href="/deadline">
+                  <Zap className="w-4 h-4 fill-current" />
+                  긴급 이사
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="h-14 text-sm font-bold rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 gap-2">
+                <Link href="/single">
+                  <User className="w-4 h-4" />
+                  1인 가구
+                </Link>
+              </Button>
+            </div>
           </div>
         </section>
 
