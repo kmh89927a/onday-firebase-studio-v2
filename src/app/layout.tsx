@@ -1,5 +1,7 @@
+
 import type {Metadata, Viewport} from 'next';
 import './globals.css';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: '내집 코디 | 맞벌이 부부 맞춤 동네 궁합',
@@ -27,6 +29,10 @@ export default function RootLayout({
         <link rel="stylesheet" as="style" crossOrigin="anonymous" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
       </head>
       <body className="font-body antialiased min-h-screen bg-background text-foreground">
+        <Script
+          src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY || 'your_fallback_key'}&autoload=false`}
+          strategy="beforeInteractive"
+        />
         <main className="max-w-[768px] mx-auto min-h-screen bg-white shadow-sm md:shadow-xl">
           {children}
         </main>
