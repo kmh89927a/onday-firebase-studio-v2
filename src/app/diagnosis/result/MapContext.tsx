@@ -1,7 +1,8 @@
-
 'use client';
 
 import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { selectCandidates } from '@/lib/mocks/candidate-selector';
 
 export type CommuteDetail = {
   duration: number;
@@ -30,93 +31,35 @@ interface MapContextType {
   filteredCandidates: Candidate[];
   allCandidates: Candidate[];
   resetFilters: () => void;
+  isLoading: boolean;
 }
 
 const MapContext = createContext<MapContextType | undefined>(undefined);
 
-const MOCK_CANDIDATES: Candidate[] = [
-  {
-    id: '1',
-    name: '강남역 인근',
-    lat: 37.4979,
-    lng: 127.0276,
-    price: 15000,
-    commuteInfo: {
-      '07:00': {
-        partner1: { duration: 15, mode: 'bus', transfers: 0 },
-        partner2: { duration: 45, mode: 'car', transfers: 0 },
-      },
-      '08:00': {
-        partner1: { duration: 25, mode: 'bus', transfers: 0 },
-        partner2: { duration: 60, mode: 'car', transfers: 0 },
-      },
-      '09:00': {
-        partner1: { duration: 20, mode: 'bus', transfers: 0 },
-        partner2: { duration: 55, mode: 'car', transfers: 0 },
-      },
-      '10:00': {
-        partner1: { duration: 15, mode: 'bus', transfers: 0 },
-        partner2: { duration: 40, mode: 'car', transfers: 0 },
-      },
-    },
-  },
-  {
-    id: '2',
-    name: '판교 백현동',
-    lat: 37.3948,
-    lng: 127.1111,
-    price: 12000,
-    commuteInfo: {
-      '07:00': {
-        partner1: { duration: 40, mode: 'car', transfers: 0 },
-        partner2: { duration: 10, mode: 'bus', transfers: 0 },
-      },
-      '08:00': {
-        partner1: { duration: 55, mode: 'car', transfers: 0 },
-        partner2: { duration: 20, mode: 'bus', transfers: 0 },
-      },
-      '09:00': {
-        partner1: { duration: 50, mode: 'car', transfers: 0 },
-        partner2: { duration: 15, mode: 'bus', transfers: 0 },
-      },
-      '10:00': {
-        partner1: { duration: 35, mode: 'car', transfers: 0 },
-        partner2: { duration: 10, mode: 'bus', transfers: 0 },
-      },
-    },
-  },
-  {
-    id: '3',
-    name: '송파 문정동',
-    lat: 37.4875,
-    lng: 127.1225,
-    price: 9000,
-    commuteInfo: {
-      '07:00': {
-        partner1: { duration: 30, mode: 'bus', transfers: 1 },
-        partner2: { duration: 30, mode: 'bus', transfers: 1 },
-      },
-      '08:00': {
-        partner1: { duration: 45, mode: 'bus', transfers: 1 },
-        partner2: { duration: 45, mode: 'bus', transfers: 1 },
-      },
-      '09:00': {
-        partner1: { duration: 40, mode: 'bus', transfers: 1 },
-        partner2: { duration: 40, mode: 'bus', transfers: 1 },
-      },
-      '10:00': {
-        partner1: { duration: 25, mode: 'bus', transfers: 1 },
-        partner2: { duration: 25, mode: 'bus', transfers: 1 },
-      },
-    },
-  },
-];
-
 export function MapProvider({ children }: { children: React.ReactNode }) {
+  const searchParams = useSearchParams();
+  const addrA = searchParams.get('addrA') || '서울시청';
+  const addrB = searchParams.get('addrB') || undefined;
+  
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [timeSlot, setTimeSlot] = useState('08:00');
   const [maxCommute, setMaxCommute] = useState(60);
   const [budgetRange, setBudgetRange] = useState<[number, number]>([1000, 30000]);
+  const [allCandidates, setAllCandidates] = useState<Candidate[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Initialize candidates based on search params
+  useEffect(() => {
+    setIsLoading(true);
+    const initialCandidates = selectCandidates(addrA, addrB);
+    setAllCandidates(initialCandidates);
+    
+    // Simulate loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [addrA, addrB]);
 
   const [debouncedFilters, setDebouncedFilters] = useState({ maxCommute, budgetRange });
 
@@ -128,7 +71,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   }, [maxCommute, budgetRange]);
 
   const filteredCandidates = useMemo(() => {
-    return MOCK_CANDIDATES.filter((c) => {
+    return allCandidates.filter((c) => {
       const info = c.commuteInfo[timeSlot];
       const commuteMatch = info.partner1.duration <= debouncedFilters.maxCommute && 
                            info.partner2.duration <= debouncedFilters.maxCommute;
@@ -136,7 +79,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
                           c.price <= debouncedFilters.budgetRange[1];
       return commuteMatch && budgetMatch;
     });
-  }, [timeSlot, debouncedFilters]);
+  }, [allCandidates, timeSlot, debouncedFilters]);
 
   const resetFilters = () => {
     setMaxCommute(60);
@@ -156,8 +99,9 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
         budgetRange,
         setBudgetRange,
         filteredCandidates,
-        allCandidates: MOCK_CANDIDATES,
+        allCandidates,
         resetFilters,
+        isLoading,
       }}
     >
       {children}

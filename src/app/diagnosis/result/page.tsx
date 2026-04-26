@@ -7,10 +7,8 @@ import { CandidateDetailPanel } from './CandidateDetailPanel';
 import { EmptyState } from './EmptyState';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Suspense, useEffect, useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { Suspense } from 'react';
 import { Card } from '@/components/ui/card';
 import { ShareButton } from './ShareButton';
 
@@ -20,15 +18,7 @@ const MapView = dynamic(() => import('./MapView'), {
 });
 
 function ResultContent() {
-  const { filteredCandidates } = useMapContext();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []);
+  const { filteredCandidates, isLoading, selectedId, setSelectedId, timeSlot } = useMapContext();
 
   return (
     <div className="flex flex-col h-screen md:flex-row overflow-hidden">
@@ -43,12 +33,12 @@ function ResultContent() {
         
         <FilterPanel />
 
-        {filteredCandidates.length === 0 && !isLoading && <EmptyState />}
+        {!isLoading && filteredCandidates.length === 0 && <EmptyState />}
         
         <div className="flex-1 p-4 space-y-4">
           <h4 className="font-bold text-sm px-1">추천 동네 리스트 ({filteredCandidates.length})</h4>
           {isLoading ? (
-            Array(3).fill(0).map((_, i) => <Skeleton key={i} className="h-32 rounded-xl" />)
+            Array(4).fill(0).map((_, i) => <Skeleton key={i} className="h-32 rounded-xl" />)
           ) : (
             filteredCandidates.map(c => <CandidateCard key={c.id} candidate={c} />)
           )}
@@ -95,7 +85,7 @@ function CandidateCard({ candidate }: { candidate: any }) {
           </div>
         </div>
         <div className="mt-3 text-right">
-          <span className="text-sm font-bold">{candidate.price.toLocaleString()}만원</span>
+          <span className="text-sm font-bold">{Math.floor(candidate.price).toLocaleString()}만원</span>
         </div>
       </div>
     </Card>
@@ -104,8 +94,10 @@ function CandidateCard({ candidate }: { candidate: any }) {
 
 export default function ResultPage() {
   return (
-    <MapProvider>
-      <ResultContent />
-    </MapProvider>
+    <Suspense fallback={<Skeleton className="w-full h-full" />}>
+      <MapProvider>
+        <ResultContent />
+      </MapProvider>
+    </Suspense>
   );
 }

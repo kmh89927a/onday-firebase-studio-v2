@@ -28,7 +28,6 @@ const diagnosisSchema = z
     address2: z.string().optional(),
   })
   .superRefine((data, ctx) => {
-    // 맞벌이 커플 모드일 때만 배우자 직장 주소 필수 검증
     if (data.mode === 'couple' && (!data.address2 || data.address2.length < 2)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -55,8 +54,14 @@ export function DiagnosisForm() {
   const mode = form.watch('mode');
 
   function onSubmit(values: DiagnosisFormValues) {
-    console.log('Diagnosis start:', values);
-    router.push('/diagnosis/result');
+    const params = new URLSearchParams();
+    params.set('mode', values.mode);
+    params.set('addrA', values.address1);
+    if (values.mode === 'couple' && values.address2) {
+      params.set('addrB', values.address2);
+    }
+    
+    router.push(`/diagnosis/result?${params.toString()}`);
   }
 
   return (
