@@ -23,7 +23,7 @@ export function DataSourceBadge({ source, date }: DataSourceBadgeProps) {
         <Database className="w-3 h-3" />
         {isOfficial ? '카카오 모빌리티 공식 데이터' : '통합 데이터베이스'}
       </Badge>
-      <div className="flex items-center gap-1 text-[10px] text-muted-foreground bg-slate-100 px-2 h-6 rounded-full">
+      <div className="flex items-center gap-1 text-[10px] text-muted-foreground bg-slate-100 px-2 h-6 rounded-full" role="status">
         <Calendar className="w-3 h-3" />
         <span>최종 업데이트 {date}</span>
       </div>

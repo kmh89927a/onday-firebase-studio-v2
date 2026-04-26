@@ -9,35 +9,14 @@ import { DataSourceBadge } from './DataSourceBadge';
 import { ConversionModal } from './ConversionModal';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Candidate } from '@/app/diagnosis/result/MapContext';
 
-const CANDIDATES = [
-  {
-    id: '1',
-    name: '성동구 옥수동',
-    partner1: { duration: 25, mode: 'bus' },
-    partner2: { duration: 20, mode: 'car' },
-    price: 95000,
-    tags: ['역세권', '한강인접', '치안우수'],
-  },
-  {
-    id: '2',
-    name: '동작구 흑석동',
-    partner1: { duration: 35, mode: 'bus' },
-    partner2: { duration: 15, mode: 'car' },
-    price: 88000,
-    tags: ['9호선급행', '신축아파트', '숲세권'],
-  },
-  {
-    id: '3',
-    name: '마포구 공덕동',
-    partner1: { duration: 15, mode: 'bus' },
-    partner2: { duration: 30, mode: 'bus' },
-    price: 82000,
-    tags: ['직주근접', '쿼드러플역세권', '맛집거리'],
-  },
-];
+interface ShareReportViewProps {
+  uuid: string;
+  candidates: Candidate[];
+}
 
-export function ShareReportView({ uuid }: { uuid: string }) {
+export function ShareReportView({ uuid, candidates }: ShareReportViewProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggedIn] = useState(false);
   const router = useRouter();
@@ -62,8 +41,10 @@ export function ShareReportView({ uuid }: { uuid: string }) {
         </section>
 
         <div className="space-y-4">
-          {CANDIDATES.map((c, index) => {
+          {candidates.map((c, index) => {
             const isBlurred = !isLoggedIn && index > 0;
+            const commute = c.commuteInfo['08:00'];
+            
             return (
               <Card 
                 key={c.id} 
@@ -73,28 +54,28 @@ export function ShareReportView({ uuid }: { uuid: string }) {
                 <CardContent className={`p-5 space-y-4 ${isBlurred ? 'filter blur-[10px] opacity-60 pointer-events-none select-none' : ''}`}>
                   <div className="flex justify-between items-start">
                     <h3 className="font-bold text-lg">{c.name}</h3>
-                    <span className="text-primary font-bold">전세 {(c.price / 10000).toFixed(1)}억</span>
+                    <span className="text-primary font-bold">예상 {Math.floor(c.price / 10000)}억대</span>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-slate-50 p-3 rounded-xl space-y-1 border border-slate-100">
                       <p className="text-[10px] text-muted-foreground font-medium">배우자 1</p>
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-sm">{c.partner1.duration}분</span>
-                        {c.partner1.mode === 'bus' ? <Bus className="w-3.5 h-3.5 text-slate-400" /> : <Car className="w-3.5 h-3.5 text-slate-400" />}
+                        <span className="font-bold text-sm">{commute.partner1.duration}분</span>
+                        {commute.partner1.mode === 'bus' ? <Bus className="w-3.5 h-3.5 text-slate-400" /> : <Car className="w-3.5 h-3.5 text-slate-400" />}
                       </div>
                     </div>
                     <div className="bg-slate-50 p-3 rounded-xl space-y-1 border border-slate-100">
                       <p className="text-[10px] text-muted-foreground font-medium">배우자 2</p>
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-sm">{c.partner2.duration}분</span>
-                        {c.partner2.mode === 'bus' ? <Bus className="w-3.5 h-3.5 text-slate-400" /> : <Car className="w-3.5 h-3.5 text-slate-400" />}
+                        <span className="font-bold text-sm">{commute.partner2.duration}분</span>
+                        {commute.partner2.mode === 'bus' ? <Bus className="w-3.5 h-3.5 text-slate-400" /> : <Car className="w-3.5 h-3.5 text-slate-400" />}
                       </div>
                     </div>
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    {c.tags.map(tag => (
+                    {['직주근접', '교통요지', '인프라우수'].map(tag => (
                       <Badge key={tag} variant="secondary" className="text-[10px] font-normal bg-slate-100 text-slate-600 border-none">{tag}</Badge>
                     ))}
                   </div>

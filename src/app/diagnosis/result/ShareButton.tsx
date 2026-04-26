@@ -4,10 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Share2, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useSearchParams } from 'next/navigation';
 
 export function ShareButton() {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (copied) {
@@ -18,13 +20,13 @@ export function ShareButton() {
 
   const handleShare = async () => {
     const dummyUuid = Math.random().toString(36).substring(2, 15);
-    const shareUrl = `${window.location.origin}/share/${dummyUuid}`;
+    const params = searchParams.toString();
+    const shareUrl = `${window.location.origin}/share/${dummyUuid}${params ? `?${params}` : ''}`;
 
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(shareUrl);
       } else {
-        // Fallback for non-secure contexts or older browsers
         const textArea = document.createElement('textarea');
         textArea.value = shareUrl;
         document.body.appendChild(textArea);
