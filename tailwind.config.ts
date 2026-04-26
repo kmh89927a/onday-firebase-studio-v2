@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
+        body: ['Pretendard', 'Inter', 'sans-serif'],
+        headline: ['Pretendard', 'Inter', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {
@@ -65,6 +65,8 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        kakao: '#FEE500',
+        naver: '#03C75A',
       },
       borderRadius: {
         lg: 'var(--radius)',

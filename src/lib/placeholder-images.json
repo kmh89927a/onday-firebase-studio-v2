@@ -1,3 +1,10 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "neighborhood-hero",
+      "description": "City neighborhood view",
+      "imageUrl": "https://picsum.photos/seed/codi1/800/600",
+      "imageHint": "city neighborhood"
+    }
+  ]
 }
