@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Home, MapPin, Share2 } from 'lucide-react';
+import { Home, MapPin, Share2, Clock, Zap } from 'lucide-react';
 
 export default function LandingPage() {
   return (
@@ -31,6 +31,12 @@ export default function LandingPage() {
             <Button asChild size="lg" className="h-14 text-lg font-bold rounded-xl shadow-lg shadow-primary/20">
               <Link href="/login">지금 바로 진단하기</Link>
             </Button>
+            <Button asChild variant="outline" size="lg" className="h-14 text-lg font-bold rounded-xl border-primary text-primary hover:bg-primary/5 gap-2">
+              <Link href="/deadline">
+                <Zap className="w-5 h-5 fill-current" />
+                긴급 이사 모드 (데드라인)
+              </Link>
+            </Button>
           </div>
         </section>
 
@@ -42,6 +48,16 @@ export default function LandingPage() {
             <div>
               <h3 className="font-bold text-lg">동선 교집합 분석</h3>
               <p className="text-sm text-muted-foreground mt-1">두 사람의 출퇴근 시간을 고려해 최적의 후보지를 제안합니다.</p>
+            </div>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 flex gap-4 items-start">
+            <div className="bg-orange-100 p-3 rounded-xl">
+              <Clock className="w-6 h-6 text-orange-600" />
+            </div>
+            <div>
+              <h3 className="font-bold text-lg">데드라인 타임라인</h3>
+              <p className="text-sm text-muted-foreground mt-1">이사 날짜를 입력하면 역순으로 준비 일정을 관리해 드립니다.</p>
             </div>
           </div>
 
