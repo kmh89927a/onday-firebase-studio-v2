@@ -16,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Briefcase, Users, User, MapPin } from 'lucide-react';
+import { LoadSavedSearchButton } from './LoadSavedSearchButton';
 
 const diagnosisSchema = z
   .object({
@@ -67,6 +68,8 @@ export function DiagnosisForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <LoadSavedSearchButton />
+        
         <FormField
           control={form.control}
           name="mode"
@@ -77,6 +80,7 @@ export function DiagnosisForm() {
                 <RadioGroup
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  value={field.value}
                   className="grid grid-cols-2 gap-4"
                 >
                   <FormItem>
