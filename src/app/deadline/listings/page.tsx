@@ -8,9 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SummaryCard, SummaryInfo } from './SummaryCard';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { MapProvider } from '../../diagnosis/result/MapContext';
 
 const MapView = dynamic(() => import('../../../app/diagnosis/result/MapView'), { 
   ssr: false,
@@ -52,7 +52,7 @@ const TOP_CANDIDATES: SummaryInfo[] = [
   }
 ];
 
-export default function DeadlineListingsPage() {
+function DeadlineListingsContent() {
   const [email, setEmail] = useState('');
   const { toast } = useToast();
 
@@ -77,7 +77,7 @@ export default function DeadlineListingsPage() {
       {/* Sidebar: Listings */}
       <div className="w-full md:w-[450px] flex flex-col h-full border-r bg-white shrink-0 overflow-y-auto z-20">
         <header className="p-4 flex items-center gap-4 border-b sticky top-0 bg-white z-30">
-          <Link href="/deadline" className="p-2 hover:bg-slate-100 rounded-full">
+          <Link href="/deadline" className="p-2 hover:bg-slate-100 rounded-full" aria-label="이전 페이지로 이동">
             <ChevronLeft className="w-6 h-6" />
           </Link>
           <h1 className="font-bold">최적 후보지 분석</h1>
@@ -118,12 +118,12 @@ export default function DeadlineListingsPage() {
                 className="bg-white border-slate-200"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                aria-label="알림 받을 이메일 주소 입력"
               />
-              <Button onClick={handleSubscribe}>구독하기</Button>
+              <Button onClick={handleSubscribe} aria-label="알림 서비스 구독하기">구독하기</Button>
             </div>
           </section>
 
-          {/* Empty State Suggestion when no results (Simulated) */}
           {TOP_CANDIDATES.length === 0 && (
             <div className="py-20 text-center space-y-6">
               <div className="bg-slate-100 p-8 rounded-full w-24 h-24 mx-auto flex items-center justify-center">
@@ -157,13 +157,20 @@ export default function DeadlineListingsPage() {
           <MapView />
         </Suspense>
         
-        {/* Floating Toggle for filters on map (Optional UI) */}
         <div className="absolute top-4 right-4 z-10">
-          <Button size="icon" className="rounded-full shadow-xl bg-white text-slate-600 hover:bg-slate-50">
+          <Button size="icon" className="rounded-full shadow-xl bg-white text-slate-600 hover:bg-slate-50" aria-label="지도 필터 열기">
             <Filter className="w-5 h-5" />
           </Button>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DeadlineListingsPage() {
+  return (
+    <MapProvider>
+      <DeadlineListingsContent />
+    </MapProvider>
   );
 }
