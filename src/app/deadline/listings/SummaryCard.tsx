@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, TrendingUp, Clock, Star, ExternalLink, Trophy } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export interface SummaryInfo {
   id: string;
@@ -99,6 +100,7 @@ export function SummaryCard({ info }: SummaryCardProps) {
         <Button 
           onClick={() => window.open(naverSearchUrl, '_blank')}
           className="w-full h-12 mt-auto font-bold gap-2"
+          aria-label={`${info.name} 매물 네이버 부동산에서 보기`}
         >
           네이버에서 매물 보기
           <ExternalLink className="w-4 h-4" />
@@ -107,5 +109,3 @@ export function SummaryCard({ info }: SummaryCardProps) {
     </Card>
   );
 }
-
-import { cn } from '@/lib/utils';

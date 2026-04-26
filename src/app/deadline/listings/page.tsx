@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { ChevronLeft, Filter, Bell, Search, Info } from 'lucide-react';
 import Link from 'next/link';
@@ -11,50 +11,34 @@ import { SummaryCard, SummaryInfo } from './SummaryCard';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { MapProvider } from '../../diagnosis/result/MapContext';
+import { selectCandidates } from '@/lib/mocks/candidate-selector';
 
 const MapView = dynamic(() => import('../../../app/diagnosis/result/MapView'), { 
   ssr: false,
   loading: () => <Skeleton className="w-full h-full" />
 });
 
-const TOP_CANDIDATES: SummaryInfo[] = [
-  {
-    id: '1',
-    rank: 1,
-    name: '성동구 옥수동',
-    price: '전세 8-10억',
-    commuteA: '30분 (강남)',
-    commuteB: '25분 (종로)',
-    amenityScore: 94,
-    reason: '강남과 강북 도심의 정중앙으로 맞벌이 부부 선호도 1위입니다. 한강공원 접근성과 지형적 희소성이 큽니다.',
-    schoolInfo: '옥정초, 옥정중 우수 학군'
-  },
-  {
-    id: '2',
-    rank: 2,
-    name: '동작구 흑석동',
-    price: '전세 7-9억',
-    commuteA: '20분 (여의도)',
-    commuteB: '35분 (강남)',
-    amenityScore: 89,
-    reason: '9호선 급행 노선으로 강남/여의도 동시 접근이 매우 용이합니다. 최근 대규모 신축 아파트 단지가 조성되었습니다.',
-  },
-  {
-    id: '3',
-    rank: 3,
-    name: '마포구 공덕동',
-    price: '전세 7.5-9.5억',
-    commuteA: '15분 (여의도)',
-    commuteB: '20분 (시청)',
-    amenityScore: 88,
-    reason: '쿼드러플 역세권으로 교통의 요지입니다. 직장인들을 위한 상권과 편의시설이 매우 잘 갖춰져 있습니다.',
-    schoolInfo: '염리초 인접'
-  }
-];
-
 function DeadlineListingsContent() {
   const [email, setEmail] = useState('');
+  const [candidates, setCandidates] = useState<SummaryInfo[]>([]);
   const { toast } = useToast();
+
+  useEffect(() => {
+    // selectCandidates() 결과를 기반으로 SummaryInfo 생성
+    const rawCandidates = selectCandidates('서울시청');
+    const formatted: SummaryInfo[] = rawCandidates.slice(0, 3).map((c, idx) => ({
+      id: c.id,
+      rank: (idx + 1) as 1 | 2 | 3,
+      name: c.name,
+      price: `약 ${Math.floor(c.price / 10000)}억대`,
+      commuteA: `${c.commuteInfo['08:00'].partner1.duration}분`,
+      commuteB: `${c.commuteInfo['08:00'].partner2.duration}분`,
+      amenityScore: 85 + Math.floor(Math.random() * 10),
+      reason: `${c.name}은(는) 교통이 매우 편리하며 직장인들을 위한 생활 인프라가 잘 갖춰져 있어 맞벌이 부부에게 추천합니다.`,
+      schoolInfo: idx === 0 ? '인근 초등학교 도보권' : undefined
+    }));
+    setCandidates(formatted);
+  }, []);
 
   const handleSubscribe = () => {
     if (!email || !email.includes('@')) {
@@ -97,7 +81,7 @@ function DeadlineListingsContent() {
             </div>
             
             <div className="grid grid-cols-1 gap-6">
-              {TOP_CANDIDATES.map(info => (
+              {candidates.map(info => (
                 <SummaryCard key={info.id} info={info} />
               ))}
             </div>
@@ -124,7 +108,7 @@ function DeadlineListingsContent() {
             </div>
           </section>
 
-          {TOP_CANDIDATES.length === 0 && (
+          {candidates.length === 0 && (
             <div className="py-20 text-center space-y-6">
               <div className="bg-slate-100 p-8 rounded-full w-24 h-24 mx-auto flex items-center justify-center">
                 <Search className="w-10 h-10 text-slate-300" />

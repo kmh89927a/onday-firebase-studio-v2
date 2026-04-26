@@ -33,46 +33,47 @@ export default function DeadlinePage() {
       return;
     }
 
+    // 더미 타임라인 생성
     const steps: TimelineStep[] = [
       {
         id: '1',
-        title: '매물 리스트 최종 확인',
-        description: '후보지 중 조건에 맞는 매물들을 최종 리스트업하고 방문 예약을 잡습니다.',
+        title: '매물 탐색 및 방문 예약',
+        description: '후보지 리스트를 바탕으로 실시간 매물을 탐색하고 주말 방문 일정을 잡습니다.',
+        dueDate: addDays(date, -30),
+        dDay: 30,
+        status: 'pending'
+      },
+      {
+        id: '2',
+        title: '현장 방문 및 가계약',
+        description: '집 상태를 최종 확인하고 마음에 드는 매물에 가계약금을 입금하여 홀딩합니다.',
         dueDate: addDays(date, -21),
         dDay: 21,
         status: 'pending'
       },
       {
-        id: '2',
-        title: '현장 방문 및 상태 체크',
-        description: '직접 방문하여 수압, 채광, 주변 소음 등을 꼼꼼히 체크합니다.',
+        id: '3',
+        title: '본계약 및 계약금 납부',
+        description: '공인중개사무소에서 임대차 계약서를 작성하고 계약금 10%를 완납합니다.',
         dueDate: addDays(date, -14),
         dDay: 14,
         status: 'pending'
       },
       {
-        id: '3',
-        title: '계약 완료 및 확정일자',
-        description: '계약을 체결하고 주민센터 또는 온라인으로 즉시 확정일자를 받습니다.',
+        id: '4',
+        title: '잔금 준비 및 서류 체크',
+        description: '대출 실행 확인 및 잔금을 준비하고, 확정일자 부여 등 행정 처리를 미리 체크합니다.',
         dueDate: addDays(date, -7),
         dDay: 7,
         status: 'urgent'
       },
       {
-        id: '4',
-        title: '이사업체 선정 및 포장',
-        description: '방문 견적을 받고 업체를 최종 선정합니다. 입주 청소도 함께 예약하세요.',
-        dueDate: addDays(date, -3),
-        dDay: 3,
-        status: 'urgent'
-      },
-      {
         id: '5',
-        title: '잔금 정산 및 입주',
-        description: '잔금을 치르고 번호키 변경 및 전입신고를 마무리합니다.',
+        title: '이사 및 잔금 지급',
+        description: '이사 당일 잔금을 입금하고 입주를 완료합니다. 즉시 전입신고를 진행하세요.',
         dueDate: date,
         dDay: 0,
-        status: 'pending'
+        status: 'urgent'
       }
     ];
 
@@ -98,7 +99,7 @@ export default function DeadlinePage() {
           <h2 className="text-2xl font-bold">언제까지 이사해야 하나요?</h2>
           <p className="text-muted-foreground text-sm">
             이사 데드라인을 입력하시면 거꾸로 계산한<br />
-            최적의 준비 스케줄을 짜드릴게요.
+            준비에 최적의 스케줄을 짜서 드릴게요.
           </p>
         </div>
 
@@ -119,7 +120,7 @@ export default function DeadlinePage() {
                   aria-label="이사 날짜 선택"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP", { locale: ko }) : <span>날짜를 선택하세요</span>}
+                  {date ? format(date, "yyyy년 MM월 dd일", { locale: ko }) : <span>날짜를 선택하세요</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
