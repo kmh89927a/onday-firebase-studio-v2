@@ -32,15 +32,16 @@ export async function generateMetadata({ params }: SharePageProps): Promise<Meta
 export default async function SharePage({ params }: SharePageProps) {
   const { uuid } = params;
 
-  // 더미 로직: 만료되거나 비밀번호가 걸린 경우 시뮬레이션
+  // 더미 로직: 만료되거나 로그인이 필요한 경우 시뮬레이션
+  // OAuth 전용 정책에 따라 비밀번호(pw) 접두사는 '로그인 필요' 의미로 사용
   const isExpired = uuid.startsWith('exp');
-  const isPasswordProtected = uuid.startsWith('pw');
+  const isAuthRequired = uuid.startsWith('pw') || uuid.startsWith('auth');
 
   if (isExpired) {
     return <ExpiredView />;
   }
 
-  if (isPasswordProtected) {
+  if (isAuthRequired) {
     return <PasswordPromptView uuid={uuid} />;
   }
 
